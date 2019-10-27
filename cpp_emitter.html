@@ -4,7 +4,13 @@
         <title>C++函数生成器</title>  
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta http-equiv="content-type" content="text/html;charset=utf8">
-        <script type="text/javascript" src="jquery.min.js"></script>
+        <link rel="stylesheet" href="/styles/default.css">
+        <script type="text/javascript" src="/lib/jquery.min.js"></script>
+        <link rel="stylesheet" href="lib/codemirror-5.49.2/lib/codemirror.css">
+        <link rel="stylesheet" href="lib/codemirror-5.49.2/theme/elegant.css">
+        <link rel="stylesheet" href="lib/codemirror-5.49.2/theme/monokai.css">
+        <script src="lib/codemirror-5.49.2/lib/codemirror.js"></script>
+        <script src="lib/codemirror-5.49.2/mode/clike/clike.js"></script>
         <style type="text/css">
             .center{
                 position:absolute;
@@ -12,22 +18,84 @@
                 width:1800px;
                 margin-top:20px;
             }
+            table{
+               width:1400px;
+               margin-left:50%;
+               left:-700px;
+               position:absolute;
+            }
+            textarea{
+                width:700px;
+                height:580px;
+                display:block;
+            }
+            .CodeMirror{
+                width:700px;
+                height:580px;
+                font-size:16px;
+                font-family: Menlo,Monaco,Consolas,"Andale Mono","lucida console","Courier New";
+            }
+            input{
+                margin-top:10px;
+                width:84px;
+                height:32px;
+                border-radius: 2px;
+                background-color: #FFF;
+                border:1px solid #999;
+                cursor:pointer;
+            }
+            input:hover{
+                color:#3a8ee6;
+                background-color: #ecf5ff;
+                border-color: #3a8ee6;
+            }
         </style>
     </head>
     <body>
         <div class="center">
-            <textarea rows="50" cols="100" class="code"></textarea>
-            <textarea rows="50" cols="100" class="emit_code"></textarea>
-            <input type="submit" name="emit" class="emit">生成代码</div>
+            <table>
+                <tr>
+                    <td>
+                        <textarea rows="40" cols="100" id="cpp_header"></textarea>
+                    </td>
+                    <td>
+                        <textarea rows="40" cols="100" id="cpp_source"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" name="emit" id="emit" value="生成代码"></div>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            
         </div>
     </body>
 <script type="text/javascript">
     $(function(){
-        $('.emit').click(function(){
+        var paste_code = '';
+        $('#cpp_header').on('paste',function(e){
+            var pastedText = undefined;
+            if(window.clipboardData && window.clipboardData.getData) { // IE
+                pastedText = window.clipboardData.getData('Text');
+            }else{
+                pastedText = e.originalEvent.clipboardData.getData('Text');//e.clipboardData.getData('text/plain');
+            }
+            paste_code = pastedText;
+            $(this).html(paste_code);
+            CodeMirror.fromTextArea(document.getElementById("cpp_header"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "text/x-c++src",
+                theme: "monokai"
+            });
+        });
+        $('#emit').click(function(){
             var public_functions_start = false;
             var emit_functions = [];
             var class_name = "";
-            var code = $('.code').val();
+            var code = paste_code;
             var lines = code.split('\n');
             
             for(var i=0; i<lines.length; i++){
@@ -40,11 +108,9 @@
                 if(public_functions_start == false){
                     if(words[0].trim() == 'class'){
                         class_name = words[1];
-                        console.log("class_name: ",class_name);
                     }else if(words[0].trim() =='public'||words[0].trim()=='public:'){
                         public_functions_start = true;
                         continue;
-                        console.log("public functions found.");
                     }
                 }
 
@@ -116,11 +182,11 @@
                         j++;
                     }while(j<line.length);
                     if(function_name !=''){
-                        console.log("********************");
-                        console.log(return_args.join(' '));
-                        console.log(function_name);
-                        console.log(input_args.join(','));
-                        console.log("********************"); 
+                        // console.log("********************");
+                        // console.log(return_args.join(' '));
+                        // console.log(function_name);
+                        // console.log(input_args.join(','));
+                        // console.log("********************"); 
                         var rtn = return_args.join(' ');
                         var member_function = (rtn==""?'':rtn+" ")+class_name+"::"+function_name+"("+input_args.join(',')+")";
                         emit_functions.push(member_function);
@@ -131,7 +197,13 @@
                 }
             }
             var emit_lines = emit_functions.join('\n');
-            $('.emit_code').val(emit_lines);
+            $('#cpp_source').html(emit_lines);
+            CodeMirror.fromTextArea(document.getElementById("cpp_source"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "text/x-c++src",
+                theme: "monokai"
+            });
         });
     });
 </script>

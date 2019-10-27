@@ -4,7 +4,7 @@
         <title>批量解码</title>  
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta http-equiv="content-type" content="text/html;charset=utf8">
-        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="/lib/jquery.min.js"></script>
         <style type="text/css">
             .center{
                 position:absolute;
