@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>C++函数生成器</title>  
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta http-equiv="content-type" content="text/html;charset=utf8">
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <style type="text/css">
+            .center{
+                position:absolute;
+                margin-left:20px;
+                width:1800px;
+                margin-top:20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="center">
+            <textarea rows="50" cols="100" class="code"></textarea>
+            <textarea rows="50" cols="100" class="emit_code"></textarea>
+            <input type="submit" name="emit" class="emit">生成代码</div>
+        </div>
+    </body>
+<script type="text/javascript">
+    $(function(){
+        $('.emit').click(function(){
+            var public_functions_start = false;
+            var emit_functions = [];
+            var class_name = "";
+            var code = $('.code').val();
+            var lines = code.split('\n');
+            
+            for(var i=0; i<lines.length; i++){
+                var line = lines[i].trim();
+                if(line ==''){
+                    console.log(line);
+                    continue;
+                }
+                var words = line.split(' ');
+                if(public_functions_start == false){
+                    if(words[0].trim() == 'class'){
+                        class_name = words[1];
+                        console.log("class_name: ",class_name);
+                    }else if(words[0].trim() =='public'||words[0].trim()=='public:'){
+                        public_functions_start = true;
+                        continue;
+                        console.log("public functions found.");
+                    }
+                }
+
+                if(public_functions_start){
+                    var bracket = false;
+                    var eol = false;//end of line
+                    var equal_sign = false;
+                    var function_name = '';
+                    var j=0;
+                    var return_args = [];
+                    var input_args = [];
+                    var word = '';
+                    do{
+                        switch(line[j]){
+                            case ' ':
+                                if(word != 'public'
+                                    && word!='private'
+                                    && word!='protected'){
+                                    if(bracket == false){
+                                        if(word.trim()!=''){
+                                            return_args.push(word);
+                                            word = '';
+                                        }
+                                    }else{
+                                        word += ' ';
+                                    }
+                                }
+                                break;
+                            case '':
+                                eol = true;
+                                break;
+                            case '(':
+                                function_name = word;
+                                bracket = true;
+                                while(line[j++]==' ');
+                                j--;//回退一格
+                                word = '';
+                                break;
+                            case '=':
+                                input_args.push(word);
+                                while(line[j]!=','&&line[j]!=')'){//忽略默认参数
+                                    j++;
+                                    continue;
+                                }
+                                while(line[j++]==' ');//跳过空格
+                                j--;
+                                word = '';
+                                break;
+                            case ',':
+                                if(word!=''&&bracket==true){
+                                    input_args.push(word);
+                                }
+                                break;
+                            case ')':
+                                input_args.push(word);
+                                bracket = false;
+                                word = '';
+                                break;
+                            case ':':
+                                eol = true;
+                                break;
+                            case ';':
+                                eol = true;
+                                break;
+                            default:
+                                word += line[j];
+                                break;
+                        }
+                        j++;
+                    }while(j<line.length);
+                    if(function_name !=''){
+                        console.log("********************");
+                        console.log(return_args.join(' '));
+                        console.log(function_name);
+                        console.log(input_args.join(','));
+                        console.log("********************"); 
+                        var rtn = return_args.join(' ');
+                        var member_function = (rtn==""?'':rtn+" ")+class_name+"::"+function_name+"("+input_args.join(',')+")";
+                        emit_functions.push(member_function);
+                        emit_functions.push('{');
+                        emit_functions.push(' ');
+                        emit_functions.push('}');
+                    }
+                }
+            }
+            var emit_lines = emit_functions.join('\n');
+            $('.emit_code').val(emit_lines);
+        });
+    });
+</script>
+</html>
