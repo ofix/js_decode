@@ -97,6 +97,8 @@
             var class_name = "";
             var code = paste_code;
             var lines = code.split('\n');
+
+            $('#cpp_source').html(''); //清空上次的内容
             
             for(var i=0; i<lines.length; i++){
                 var line = lines[i].trim();
