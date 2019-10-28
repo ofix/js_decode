@@ -107,7 +107,12 @@
                 var words = line.split(' ');
                 if(public_functions_start == false){
                     if(words[0].trim() == 'class'){
-                        class_name = words[1];
+                        var cls = words[1];
+                        var m=0;
+                        while(cls[m]!=':'){
+                            class_name+=cls[m];
+                            m++;
+                        }
                     }else if(words[0].trim() =='public'||words[0].trim()=='public:'){
                         public_functions_start = true;
                         continue;
@@ -188,6 +193,7 @@
                         // console.log(input_args.join(','));
                         // console.log("********************"); 
                         var rtn = return_args.join(' ');
+                        rtn = rtn.replace(/virtual/g,'');
                         var member_function = (rtn==""?'':rtn+" ")+class_name+"::"+function_name+"("+input_args.join(',')+")";
                         emit_functions.push(member_function);
                         emit_functions.push('{');
