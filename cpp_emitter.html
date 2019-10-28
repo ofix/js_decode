@@ -100,18 +100,25 @@
             
             for(var i=0; i<lines.length; i++){
                 var line = lines[i].trim();
-                if(line ==''){
-                    console.log(line);
+                if(line ==''){   
                     continue;
                 }
+                if(line.length>=2&&line[0]=='/'&&line[1]=='/'){
+                    continue;
+                }
+                console.log(line);
                 var words = line.split(' ');
                 if(public_functions_start == false){
                     if(words[0].trim() == 'class'){
                         var cls = words[1];
-                        var m=0;
-                        while(cls[m]!=':'){
-                            class_name+=cls[m];
-                            m++;
+                        if(cls.indexOf(':')!= -1){
+                            var m=0;
+                            while(cls[m]!=':'){
+                                class_name+=cls[m];
+                                m++;
+                            }
+                        }else{
+                            class_name = cls;
                         }
                     }else if(words[0].trim() =='public'||words[0].trim()=='public:'){
                         public_functions_start = true;
