@@ -79,7 +79,18 @@ var ClassNameEmitter = function(code){
 };
 
 ParseParameters(code,i,len){
-	
+	switch(code[i++]){
+		case ',':
+		case '<':{
+			
+			break;
+		}
+		case '"':
+		case '(':
+		case ')':
+		default:
+			break;
+	}
 }
 
 ParseString(code,i,len){

@@ -1,0 +1,60 @@
+.nav-panel{
+	width:800px;
+	background-color: #EEE;
+	border:1px solid #bbb;
+}
+.nav-row{
+	border-bottom:1px solid #999;
+	padding:0;
+}
+
+.nav-row:after{
+	content:"";
+    clear:both;/*清除浮动*/
+    width:0;
+    height:0;
+    display:block;/*确保该元素是一个块级元素*/
+}
+
+.nav-title{
+	width:80px;
+	padding-left:8px;
+	line-height:42px;
+	height:42px;
+	float:left;
+	border-right:1px solid #aaa;
+}
+.nav-items{
+	margin-left:90px;
+	padding-top:5px;
+}
+.nav-item{
+	float:left;
+	margin-left:10px;
+	text-align:center;
+	padding-left:6px;
+	padding-right:6px;
+	font-size:14px;
+	margin-bottom:3px;
+	font-family: Menlo,Monaco,Consolas,"Andale Mono","lucida console","Courier New";
+	height:32px;
+	line-height:32px;
+	background-color:#242425;
+	border-radius: 3px;
+	cursor: pointer;
+	color:#A6E22B;
+}
+.nav-items:after{
+    content:"";
+    clear:both;/*清除浮动*/
+    width:0;
+    height:0;
+    display:block;/*确保该元素是一个块级元素*/
+}
+.nav-item:hover{
+	background-color: #474747;
+}
+
+.nav-row:last-child{
+	border-bottom:none;
+}
